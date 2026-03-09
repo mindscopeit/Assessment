@@ -10,6 +10,11 @@ from PIL import Image, ImageDraw, ImageFont
 # MUST BE THE FIRST STREAMLIT COMMAND
 st.set_page_config(page_title="AI Readiness Assessment", layout="centered")
 
+# ================= COMPATIBILITY FIX =================
+# Ensure st.rerun() works even on older Streamlit versions
+if not hasattr(st, 'rerun'):
+    st.rerun = st.experimental_rerun
+
 # ================= LOGO HANDLING (ONLY FOR WEB PAGE) =================
 logo_path = "photo.jpg"  # Replace with your actual logo file if you have one
 
@@ -131,7 +136,7 @@ if st.session_state.step == 1:
 
     if st.button("Start Assessment"):
         st.session_state.step = 2
-        st.experimental_rerun()
+        st.rerun()
 
 # ================= STEP 2 =================
 elif st.session_state.step == 2:
@@ -147,14 +152,14 @@ elif st.session_state.step == 2:
     with col1:
         if st.button("Back"):
             st.session_state.step = 1
-            st.experimental_rerun()
+            st.rerun()
     with col2:
         if st.button("Continue"):
             if not st.session_state.domain or st.session_state.domain == "-- Select --":
                 st.warning("Please select a domain to continue.")
             else:
                 st.session_state.step = 3
-                st.experimental_rerun()
+                st.rerun()
 
 # ================= STEP 3 =================
 elif st.session_state.step == 3:
@@ -176,7 +181,7 @@ elif st.session_state.step == 3:
     with col1:
         if st.button("Back"):
             st.session_state.step = 2
-            st.experimental_rerun()
+            st.rerun()
     with col2:
         if st.button("Start Assessment"):
             # Include mandatory questions
@@ -202,7 +207,7 @@ elif st.session_state.step == 3:
             st.session_state.answers = {}
             st.session_state.q_index = 0
             st.session_state.step = 4
-            st.experimental_rerun()
+            st.rerun()
 
 # ================= STEP 4 =================
 elif st.session_state.step == 4:
@@ -215,7 +220,7 @@ elif st.session_state.step == 4:
         st.success("✅ You have completed all questions!")
         if st.button("View AI Readiness Report"):
             st.session_state.step = 5
-            st.experimental_rerun()
+            st.rerun()
     else:
         q = qs[i]
         st.caption(f"Question {i+1} of {len(qs)}")
@@ -275,11 +280,11 @@ elif st.session_state.step == 4:
         with col1:
             if st.button("Back") and i > 0:
                 st.session_state.q_index -= 1
-                st.experimental_rerun()
+                st.rerun()
         with col2:
             if st.button("Next"):
                 st.session_state.q_index += 1
-                st.experimental_rerun()
+                st.rerun()
 
 # ================= STEP 5 =================
 elif st.session_state.step == 5:
